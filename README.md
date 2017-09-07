@@ -1,0 +1,2 @@
+# SkillWords
+使用python抓取百度百聘上的Python相关的所有职位描述提取关键词进行统计并制作词云
