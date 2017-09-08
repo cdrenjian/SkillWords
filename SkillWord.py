@@ -1,7 +1,9 @@
 #-*-coding:utf-8-*-
 import requests,urllib,re,json,jieba
-from wordcloud import WordCloud
+from wordcloud import WordCloud,ImageColorGenerator
 from bs4 import BeautifulSoup
+from PIL import Image
+import numpy as np
 import matplotlib.pyplot as plt
 # html = requests.get("http://www.baidu.com").content
 # soup = BeautifulSoup(html, 'html.parser', from_encoding='utf-8')
@@ -67,11 +69,12 @@ def select_cn(a):
 
 def wordcloud(s):   #制作词云
     s=s.lower()
-    s= WordCloud(background_color="white", width=1000, height=860, margin=2).generate(s)
+    bg = np.array(Image.open("mask.png"))  #转换图片为数组
+    s= WordCloud(background_color="white",mask=bg, width=1000, height=860, margin=2).generate(s) #mask设置背景生成图
     plt.imshow(s)
     plt.axis("off")
     plt.show()
-    s.to_file(imgname)
+    s.to_file(imgname) #保存图片
 
 def  counts(s):  #进行中文分词统计词频
     s=s.split(",")   #以“，”切割，返回一个list
@@ -89,8 +92,8 @@ if __name__=="__main__":
     getcontent()  #得到有效的职位描述数据
     with open(filename,"r") as f:
         words=f.read()
-        cn=select_cn(words)  #提取英文词
-        en=select_en(words)  #提取中文词,ps：提取到的这些中文词有用信息很少，干扰信息较多，没太大价值。
+        cn=select_cn(words) #提取中文词,ps：提取到的这些中文词有用信息很少，干扰信息较多，没太大价值。
+        en=select_en(words)   #提取英文词
         counts(en)     #统计英文词频
         wordcloud(en)  #制作词云
         counts(cn)    #统计中文词频
